@@ -16,10 +16,12 @@
 
   /* Cores do projeto */
   --color-dourado: #CFAA60;
-  --color-bege-claro: #E5E8EB;
+  --color-bege-claro: #EFE8E0;
   --color-azul-escuro: #0C1C2C;
   --color-azul-claro: #54ABDD;
   --color-laranja: #EBB855;
+  --color-fundos:#FFF7F7;
+  --color-fundo-input: #FAFAFA;
 }
 
 

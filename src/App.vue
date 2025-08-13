@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import CadastroUsuario from './components/CadastroUsuario.vue';
-import CadastroFreelancer from './components/CadastroFreelancer.vue';
-
+import navBarCadastros from './components/navBarCadastros.vue';
 </script>
 
 <template>
- <CadastroFreelancer />
+  <div>
+ 
+    <navBarCadastros />
+    <router-link to="/CadastroUsuario"></router-link>
+    <router-link to="/CadastroFreelancer"></router-link>
+
+    <router-view></router-view>
+  </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import navBarCadastros from './navBarCadastros.vue';
+
 
 const form = ref({
     nome: '',
@@ -11,36 +11,27 @@ const form = ref({
 
 function handleSubmit(){
     try{
-        // Verifica se os campos obrigatórios estão preenchidos
-        if (!form.value.nome || !form.value.email || !form.value.senha || !form.value.confirmarSenha) {
-            alert('Por favor, preencha todos os campos obrigatórios.');
+        const{ nome, email, senha, confirmarSenha } = form.value;
+        const validators = [
+            {valid: nome?.trim(), msg: 'Nome é obrigatório'},
+            {valid: email?.trim(), msg: 'Email é obrigatório'},
+            {valid: senha?.trim(), msg: 'Senha é obrigatória'},
+            {valid: confirmarSenha?.trim(), msg: 'Confirmação de senha é obrigatória'},
+            {valid: senha === confirmarSenha, msg: 'As senhas não coincidem'},
+            {valid: senha.length >= 8, msg: 'A senha deve ter no mínimo 8 caracteres'},
+            {valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), msg: 'Email inválido'}
+        ]
+        const erro = validators.find(v => !v.valid);
+        if(erro){
+            alert(erro.msg);
             return;
         }
-
-        //verifica senhas
-        if (form.value.senha !== form.value.confirmarSenha){
-            alert('As senhas não coincidem.');
-            return;
-        } 
-        
-        // verifica senhas
-        if (form.value.senha.length < 8) {
-            alert('A senha deve ter pelo menos 8 caracteres.');
-            return;
-        }
-
-        // verifica email
-        if (!form.value.email.includes('@')) {
-            alert('Por favor, insira um email válido.');
-            return;
-        }
-    } catch (error) {
-        console.error('Erro ao comparar senhas:', error);
-        return;
+        console.log('Usuário cadastrado com sucesso:', form.value);
     }
-    
-    console.log('Formulário enviado:', form.value);
+    catch(error){
+        console.error('Erro ao processar formulário', error);
 
+    }
 
 }
 
@@ -48,8 +39,7 @@ function handleSubmit(){
 
 <template>
 
-    <!--Logica da tela de cadastro de usuario, iniciando com o navBarCadastros-->
-    <navBarCadastros />
+
     <body>
         <div class="flex items-center justify-center min-h-screen flex-col max-w-800 mx-auto p-4">
             <h1 class="text-2xl font-bold mb-6 text-center">
