@@ -13,9 +13,9 @@ const route = useRoute()
   <header class="bg-[var(--color-fundo-input)] border-b-2 border-gray-200 ">
     <div class="flex-grow h-16 flex items-center justify-between px-10 w-full ">
       <a href=""><img src="../img/Logo.png" alt="Logo" class="h-10"></a>
-      <a v-if="route.path !== '/CadastroFreelancer' && route.path !== '/PerfilFreelancer'" href="./CadastroFreelancer">Torne-se um Freelancer</a>
+      <a v-if="route.path !== '/CadastroFreelancer' && route.path !== '/PerfilFreelancer' && route.path !== '/PerfilCliente' " href="./CadastroFreelancer">Torne-se um Freelancer</a>
       <!--Área para navegação do perfil-->
-      <div v-if="route.path === '/PerfilFreelancer'" class="flex items-center">
+      <div v-if="route.path === '/PerfilFreelancer', '/PerfilCliente'" class="flex items-center">
         <a href="" class="mr-4">Explorar</a>
         <a href="" class="mr-4">Dashboard</a>
         <button class="border-transparent rounded text-black h-auto p-2 cursor-pointer mr-4">Mensagens</button>

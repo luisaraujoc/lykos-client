@@ -8,6 +8,7 @@ import navBarCadastros from './components/navBarCadastros.vue';
     <router-link to="/CadastroUsuario"></router-link>
     <router-link to="/CadastroFreelancer"></router-link>
     <router-link to="/PerfilFreelancer"></router-link>
+    <router-link to="/PerfilCliente"></router-link>
     <router-view></router-view>
   </div>
 </template>
