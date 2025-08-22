@@ -58,12 +58,26 @@ const user = {
 
       <!-- Coluna direita - Contratações -->
       <main class="flex-1">
-        <div class="bg-white shadow rounded-lg p-6 h-full flex flex-col items-center justify-center">
-          <h3 class="text-lg font-semibold mb-6 self-start">Contratações ativas</h3>
-          <div class="flex flex-col items-center text-gray-600">
-            <span class="text-5xl mb-4">🤷🏽‍♂️</span>
-            <p>Você ainda não contratou ninguém!</p>
-          </div>
+        <div class="bg-white shadow rounded-lg p-6 h-full flex flex-col ">
+          <h3 class="text-lg font-semibold mb-6  text-black text-center">Contratações ativas</h3>
+          <!-- Lista de contratações -->
+          <div class="flex items-stretch justify-between gap-4 rounded-lg bg-[var(--color-fundo-input)] p-4">
+                <div class="flex flex-col gap-2 p-4  w-full max-w-[480px]">
+                  <div class="flex flex-col gap-1">
+                    <p class="text-[#0d141c] text-base font-bold leading-tight">Sessão Fotografica</p>
+                    <p class="text-[#49709c] text-sm font-normal leading-normal">Freelancer: Alex Turner</p>
+                  </div>
+                  <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 flex-row-reverse bg-[#e7edf4] text-[#0d141c] text-sm font-medium leading-normal w-fit"
+                  >
+                    <span class="truncate">Detalhes</span>
+                  </button>
+                </div>
+                <div
+                  class="w-40 h-28 bg-center bg-no-repeat bg-cover rounded-lg"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA90odZd3razRM2DGbQD9QvpHml6rifZXxdAytw_iMNOCoBnybC9C3OtQtgTAi3_sWn7RHwHdx4idSCkDi4LxL6XQD3O9gNNUOYi8Kp40JEpYBXKd7N4IKeUlCRmuAhbBamFsjoscoNE5bMfHA9e-y-paQRWoq2wvAer3nc7rlZLju1cP2rXVoK7ILQyNoCqFERjBJ8XWtoHH2qeu2140pXtulS0yJJsOX0wJrXKV0LHAgWnYIDUMk_rkHUp_dORy_oK5uGqqSKTmA");'
+                ></div>
+            </div>
         </div>
       </main>
     </div>
