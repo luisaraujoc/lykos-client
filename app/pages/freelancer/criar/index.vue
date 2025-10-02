@@ -76,10 +76,17 @@ const form = ref({
 function handleFileUpload(event: Event) {
   const target = event.target as HTMLInputElement;
   if (target.files && target.files.length > 0) {
-    form.value.fotoPerfil = target.files[0];
-    console.log('Foto de perfil recebida:', form.value.fotoPerfil.name); // Adicione este console.log para depuração
+    // form.value.fotoPerfil = target.files[0];
+    // ✅ Checa se fotoPerfil não é null antes de acessar name
+    if (form.value.fotoPerfil) {
+      console.log('Foto de perfil recebida:', form.value.fotoPerfil.name);
+    }
+  } else {
+    form.value.fotoPerfil = null;
+    console.warn('Nenhuma foto de perfil foi selecionada.');
   }
 }
+
 
 function handleSubmit() {
   try {
@@ -242,7 +249,7 @@ function handleSubmit() {
   </main>
 </template>
 
-<style>
+<style scoped>
 h1,
 h2 {
   color: black;

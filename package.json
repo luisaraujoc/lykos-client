@@ -1,24 +1,27 @@
 {
-  "name": "lykos-client",
-  "private": true,
-  "version": "0.0.0",
+  "name": "nuxt-app",
   "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.11",
-    "tailwindcss": "^4.1.11",
-    "vue": "^3.5.17",
+    "@iconoir/vue": "^7.11.0",
+    "@nuxt/eslint": "^1.9.0",
+    "@nuxt/image": "^1.11.0",
+    "@nuxt/scripts": "^0.11.13",
+    "@nuxt/test-utils": "^3.19.2",
+    "@nuxt/ui": "^3.3.4",
+    "@unhead/vue": "^2.0.17",
+    "eslint": "^9.35.0",
+    "nuxt": "^4.1.2",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vue": "^3.5.21",
     "vue-router": "^4.5.1"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.0",
-    "@vue/tsconfig": "^0.7.0",
-    "typescript": "~5.8.3",
-    "vite": "^7.0.4",
-    "vue-tsc": "^2.2.12"
   }
 }
