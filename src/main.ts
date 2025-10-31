@@ -1,5 +1,9 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+// main.ts
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router'; // Importe a instância do roteador
+import './style.css';
 
-createApp(App).mount('#app')
+createApp(App)
+  .use(router) // Use o roteador
+  .mount('#app');
