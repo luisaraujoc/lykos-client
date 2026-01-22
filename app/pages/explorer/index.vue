@@ -180,17 +180,27 @@ const navigateToGig = (id: number) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen" :style="{ backgroundColor: 'var(--ui-bg)' }">
     <!-- Search Section -->
-    <div class="bg-gray-50 py-8 px-6">
+    <div :style="{ backgroundColor: 'var(--ui-bg-muted)' }" class="py-8 px-6">
       <div class="max-w-7xl mx-auto">
-        <h1 class="text-3xl font-bold text-black mb-6">Explorar Serviços</h1>
+        <h1 class="text-3xl font-bold mb-6" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-3xl)', fontWeight: 'var(--font-bold)' }}>
+          Explorar Serviços
+        </h1>
         <div class="flex gap-4 items-center">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Buscar serviços, freelancers..."
-            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+            class="flex-1 px-4 py-3"
+            :style="{
+              borderColor: 'var(--ui-border)',
+              borderWidth: '1px',
+              borderRadius: 'var(--radius-lg)',
+              backgroundColor: 'var(--ui-bg-elevated)',
+              color: 'var(--ui-text)',
+              fontSize: 'var(--text-md)'
+            }"
           />
         </div>
       </div>
@@ -203,18 +213,21 @@ const navigateToGig = (id: number) => {
         <div class="lg:col-span-1">
           <!-- Category Filter -->
           <div class="space-y-4">
-            <h3 class="text-lg font-semibold text-black">Categorias</h3>
+            <h3 class="text-lg font-semibold" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)' }}>
+              Categorias
+            </h3>
             <div class="space-y-2">
               <button
                 v-for="cat in categories"
                 :key="cat.id"
                 @click="selectedCategory = cat.id; currentPage = 1"
-                :class="[
-                  'w-full px-4 py-3 rounded-lg text-left font-medium transition-colors',
-                  selectedCategory === cat.id
-                    ? 'bg-[var(--color-dourado)] text-white'
-                    : 'bg-gray-100 text-black hover:bg-gray-200'
-                ]"
+                :class="['w-full px-4 py-3 rounded-lg text-left font-medium transition-colors', 'text-sm']"
+                :style="{
+                  backgroundColor: selectedCategory === cat.id ? 'var(--primary-500)' : 'var(--ui-bg-muted)',
+                  color: selectedCategory === cat.id ? 'var(--darkblue-800)' : 'var(--ui-text)',
+                  fontWeight: 'var(--font-medium)',
+                  cursor: 'pointer'
+                }"
               >
                 <span class="mr-2">{{ cat.icon }}</span>
                 {{ cat.label }}
@@ -224,10 +237,20 @@ const navigateToGig = (id: number) => {
 
           <!-- Sort Filter -->
           <div class="mt-8 space-y-4">
-            <h3 class="text-lg font-semibold text-black">Ordenar por</h3>
+            <h3 class="text-lg font-semibold" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)' }">
+              Ordenar por
+            </h3>
             <select
               v-model="sortBy"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+              class="w-full px-4 py-2"
+              :style="{
+                borderColor: 'var(--ui-border)',
+                borderWidth: '1px',
+                borderRadius: 'var(--radius-lg)',
+                backgroundColor: 'var(--ui-bg-elevated)',
+                color: 'var(--ui-text)',
+                fontSize: 'var(--text-sm)'
+              }"
             >
               <option value="relevance">Relevância</option>
               <option value="rating">Melhor avaliado</option>
@@ -240,16 +263,18 @@ const navigateToGig = (id: number) => {
         <!-- Main Content - Gigs Grid -->
         <div class="lg:col-span-3">
           <div class="mb-6 flex justify-between items-center">
-            <p class="text-gray-600">
+            <p :style="{ color: 'var(--ui-text-muted)', fontSize: 'var(--text-sm)' }}>
               Exibindo
-              <span class="font-semibold">{{ filteredGigs.length }}</span>
+              <span class="font-semibold" :style="{ color: 'var(--ui-text)' }}> {{ filteredGigs.length }}</span>
               resultado(s)
             </p>
           </div>
 
           <!-- Empty State -->
           <div v-if="filteredGigs.length === 0" class="text-center py-12">
-            <p class="text-gray-500 text-lg">Nenhum serviço encontrado</p>
+            <p :style="{ color: 'var(--ui-text-muted)', fontSize: 'var(--text-lg)' }}>
+              Nenhum serviço encontrado
+            </p>
           </div>
 
           <!-- Gigs Grid -->
@@ -258,7 +283,13 @@ const navigateToGig = (id: number) => {
               v-for="gig in paginatedGigs"
               :key="gig.id"
               @click="navigateToGig(gig.id)"
-              class="cursor-pointer group overflow-hidden rounded-lg border border-gray-200 hover:shadow-lg transition-shadow"
+              class="cursor-pointer group overflow-hidden transition-shadow hover:shadow-lg"
+              :style="{
+                borderColor: 'var(--ui-border)',
+                borderWidth: '1px',
+                borderRadius: 'var(--radius-lg)',
+                backgroundColor: 'var(--ui-bg-elevated)'
+              }"
             >
               <!-- Image -->
               <div class="relative overflow-hidden h-48 bg-gray-200">
@@ -267,38 +298,53 @@ const navigateToGig = (id: number) => {
                   :alt="gig.title"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
-                <span class="absolute top-3 right-3 bg-[var(--color-dourado)] text-white px-3 py-1 rounded-full text-xs font-medium">
+                <span
+                  class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium text-darkblue-800"
+                  :style="{
+                    backgroundColor: 'var(--primary-500)',
+                    color: 'var(--darkblue-800)',
+                    fontSize: 'var(--text-xs)',
+                    fontWeight: 'var(--font-medium)'
+                  }}
+                >
                   {{ gig.tag }}
                 </span>
               </div>
 
               <!-- Content -->
-              <div class="p-4">
+              <div class="p-4" :style="{ padding: 'var(--space-4)' }">
                 <!-- Seller Info -->
-                <div class="flex items-center gap-3 mb-3">
+                <div class="flex items-center gap-3 mb-3" :style="{ gap: 'var(--space-3)' }">
                   <img
                     :src="gig.avatar"
                     :alt="gig.seller"
                     class="w-8 h-8 rounded-full object-cover"
+                    :style="{ borderRadius: 'var(--radius-full)' }}
                   />
-                  <p class="text-sm font-medium text-gray-700">{{ gig.seller }}</p>
+                  <p class="text-sm font-medium" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
+                    {{ gig.seller }}
+                  </p>
                 </div>
 
                 <!-- Title -->
-                <h3 class="font-semibold text-black mb-3 line-clamp-2">
+                <h3 class="font-semibold mb-3 line-clamp-2" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-md)', fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-3)' }}>
                   {{ gig.title }}
                 </h3>
 
                 <!-- Rating -->
-                <div class="flex items-center gap-1 mb-3">
-                  <span class="text-yellow-500">★</span>
-                  <span class="text-sm font-medium text-gray-700">{{ gig.rating }}</span>
-                  <span class="text-sm text-gray-500">({{ gig.reviews }})</span>
+                <div class="flex items-center gap-1 mb-3" :style="{ gap: 'var(--space-1)', marginBottom: 'var(--space-3)' }}>
+                  <span style="color: var(--secondary-500)">★</span>
+                  <span class="text-sm font-medium" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
+                    {{ gig.rating }}
+                  </span>
+                  <span class="text-sm" :style="{ color: 'var(--ui-text-muted)', fontSize: 'var(--text-sm)' }}>
+                    ({{ gig.reviews }})
+                  </span>
                 </div>
 
                 <!-- Price -->
-                <div class="border-t border-gray-200 pt-3">
-                  <p class="text-xl font-bold text-[var(--color-dourado)]">
+                <div :style="{ borderTopColor: 'var(--ui-border)', borderTopWidth: '1px', paddingTop: 'var(--space-3)' }}>
+                  <p class="text-xl font-bold" :style="{ color: 'var(--primary-500)', fontSize: '1.25rem', fontWeight: 'var(--font-bold)' }}>
                     R$ {{ gig.price.toLocaleString('pt-BR') }}
                   </p>
                 </div>
@@ -307,7 +353,7 @@ const navigateToGig = (id: number) => {
           </div>
 
           <!-- Pagination -->
-          <div v-if="totalPages > 1" class="flex justify-center items-center gap-2">
+          <div v-if="totalPages > 1" class="flex justify-center items-center gap-2" :style="{ gap: 'var(--space-2)' }">
             <UButton
               @click="currentPage = Math.max(1, currentPage - 1)"
               :disabled="currentPage === 1"
@@ -316,17 +362,20 @@ const navigateToGig = (id: number) => {
               Anterior
             </UButton>
 
-            <div class="flex gap-1">
+            <div class="flex gap-1" :style="{ gap: 'var(--space-1)' }">
               <button
                 v-for="page in totalPages"
                 :key="page"
                 @click="currentPage = page"
-                :class="[
-                  'px-3 py-2 rounded transition-colors',
-                  currentPage === page
-                    ? 'bg-[var(--color-dourado)] text-white'
-                    : 'bg-gray-200 text-black hover:bg-gray-300'
-                ]"
+                class="px-3 py-2 rounded transition-colors"
+                :style="{
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: currentPage === page ? 'var(--primary-500)' : 'var(--ui-bg-muted)',
+                  color: currentPage === page ? 'var(--darkblue-800)' : 'var(--ui-text)',
+                  fontWeight: 'var(--font-medium)',
+                  cursor: 'pointer'
+                }}
               >
                 {{ page }}
               </button>
