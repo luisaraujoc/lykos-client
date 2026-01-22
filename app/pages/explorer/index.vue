@@ -12,7 +12,7 @@ const sortBy = ref('relevance')
 const currentPage = ref(1)
 const itemsPerPage = 12
 
-// Mock data - replace with API calls later
+// Mock data
 const categories = [
   { id: 'all', label: 'Todas as categorias', icon: '🎯' },
   { id: 'design', label: 'Design', icon: '🎨' },
@@ -22,7 +22,6 @@ const categories = [
   { id: 'video', label: 'Vídeo', icon: '🎬' },
 ]
 
-// Mock gigs data
 const allGigs = [
   {
     id: 1,
@@ -138,12 +137,10 @@ const allGigs = [
 const filteredGigs = computed(() => {
   let result = allGigs
 
-  // Filter by category
   if (selectedCategory.value !== 'all') {
     result = result.filter(gig => gig.category === selectedCategory.value)
   }
 
-  // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(gig =>
@@ -152,7 +149,6 @@ const filteredGigs = computed(() => {
     )
   }
 
-  // Sort
   if (sortBy.value === 'price-low') {
     result.sort((a, b) => a.price - b.price)
   } else if (sortBy.value === 'price-high') {
@@ -173,38 +169,27 @@ const totalPages = computed(() => {
   return Math.ceil(filteredGigs.value.length / itemsPerPage)
 })
 
-// Methods
 const navigateToGig = (id: number) => {
   navigateTo(`/explorer/${id}`)
 }
 </script>
 
 <template>
-  <div class="min-h-screen" :style="{ backgroundColor: 'var(--ui-bg)' }">
+  <div class="explorer-page">
     <!-- Search Section -->
-    <div :style="{ backgroundColor: 'var(--ui-bg-muted)' }" class="py-8 px-6">
+    <section class="explorer-search">
       <div class="max-w-7xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-3xl)', fontWeight: 'var(--font-bold)' }}>
-          Explorar Serviços
-        </h1>
-        <div class="flex gap-4 items-center">
+        <h1 class="explorer-title">Explorar Serviços</h1>
+        <div class="explorer-search-input-wrapper">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Buscar serviços, freelancers..."
-            class="flex-1 px-4 py-3"
-            :style="{
-              borderColor: 'var(--ui-border)',
-              borderWidth: '1px',
-              borderRadius: 'var(--radius-lg)',
-              backgroundColor: 'var(--ui-bg-elevated)',
-              color: 'var(--ui-text)',
-              fontSize: 'var(--text-md)'
-            }"
+            class="explorer-search-input"
           />
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-6 py-8">
@@ -212,22 +197,15 @@ const navigateToGig = (id: number) => {
         <!-- Sidebar - Filters -->
         <div class="lg:col-span-1">
           <!-- Category Filter -->
-          <div class="space-y-4">
-            <h3 class="text-lg font-semibold" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)' }}>
-              Categorias
-            </h3>
+          <div class="mb-8">
+            <h3 class="explorer-filter-title">Categorias</h3>
             <div class="space-y-2">
               <button
                 v-for="cat in categories"
                 :key="cat.id"
                 @click="selectedCategory = cat.id; currentPage = 1"
-                :class="['w-full px-4 py-3 rounded-lg text-left font-medium transition-colors', 'text-sm']"
-                :style="{
-                  backgroundColor: selectedCategory === cat.id ? 'var(--primary-500)' : 'var(--ui-bg-muted)',
-                  color: selectedCategory === cat.id ? 'var(--darkblue-800)' : 'var(--ui-text)',
-                  fontWeight: 'var(--font-medium)',
-                  cursor: 'pointer'
-                }"
+                class="explorer-category-btn"
+                :class="{ active: selectedCategory === cat.id }"
               >
                 <span class="mr-2">{{ cat.icon }}</span>
                 {{ cat.label }}
@@ -236,21 +214,11 @@ const navigateToGig = (id: number) => {
           </div>
 
           <!-- Sort Filter -->
-          <div class="mt-8 space-y-4">
-            <h3 class="text-lg font-semibold" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)' }">
-              Ordenar por
-            </h3>
+          <div>
+            <h3 class="explorer-filter-title">Ordenar por</h3>
             <select
               v-model="sortBy"
-              class="w-full px-4 py-2"
-              :style="{
-                borderColor: 'var(--ui-border)',
-                borderWidth: '1px',
-                borderRadius: 'var(--radius-lg)',
-                backgroundColor: 'var(--ui-bg-elevated)',
-                color: 'var(--ui-text)',
-                fontSize: 'var(--text-sm)'
-              }"
+              class="explorer-select"
             >
               <option value="relevance">Relevância</option>
               <option value="rating">Melhor avaliado</option>
@@ -262,19 +230,15 @@ const navigateToGig = (id: number) => {
 
         <!-- Main Content - Gigs Grid -->
         <div class="lg:col-span-3">
-          <div class="mb-6 flex justify-between items-center">
-            <p :style="{ color: 'var(--ui-text-muted)', fontSize: 'var(--text-sm)' }}>
-              Exibindo
-              <span class="font-semibold" :style="{ color: 'var(--ui-text)' }}> {{ filteredGigs.length }}</span>
-              resultado(s)
+          <div class="mb-6">
+            <p class="explorer-result-count">
+              Exibindo <span class="font-semibold">{{ filteredGigs.length }}</span> resultado(s)
             </p>
           </div>
 
           <!-- Empty State -->
-          <div v-if="filteredGigs.length === 0" class="text-center py-12">
-            <p :style="{ color: 'var(--ui-text-muted)', fontSize: 'var(--text-lg)' }}>
-              Nenhum serviço encontrado
-            </p>
+          <div v-if="filteredGigs.length === 0" class="explorer-empty-state">
+            <p>Nenhum serviço encontrado</p>
           </div>
 
           <!-- Gigs Grid -->
@@ -283,77 +247,50 @@ const navigateToGig = (id: number) => {
               v-for="gig in paginatedGigs"
               :key="gig.id"
               @click="navigateToGig(gig.id)"
-              class="cursor-pointer group overflow-hidden transition-shadow hover:shadow-lg"
-              :style="{
-                borderColor: 'var(--ui-border)',
-                borderWidth: '1px',
-                borderRadius: 'var(--radius-lg)',
-                backgroundColor: 'var(--ui-bg-elevated)'
-              }"
+              class="explorer-gig-card"
             >
               <!-- Image -->
-              <div class="relative overflow-hidden h-48 bg-gray-200">
+              <div class="explorer-gig-image">
                 <img
                   :src="gig.image"
                   :alt="gig.title"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  class="w-full h-full object-cover"
                 />
-                <span
-                  class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium text-darkblue-800"
-                  :style="{
-                    backgroundColor: 'var(--primary-500)',
-                    color: 'var(--darkblue-800)',
-                    fontSize: 'var(--text-xs)',
-                    fontWeight: 'var(--font-medium)'
-                  }}
-                >
-                  {{ gig.tag }}
-                </span>
+                <span class="explorer-gig-tag">{{ gig.tag }}</span>
               </div>
 
               <!-- Content -->
-              <div class="p-4" :style="{ padding: 'var(--space-4)' }">
+              <div class="explorer-gig-content">
                 <!-- Seller Info -->
-                <div class="flex items-center gap-3 mb-3" :style="{ gap: 'var(--space-3)' }">
+                <div class="explorer-gig-seller">
                   <img
                     :src="gig.avatar"
                     :alt="gig.seller"
                     class="w-8 h-8 rounded-full object-cover"
-                    :style="{ borderRadius: 'var(--radius-full)' }}
                   />
-                  <p class="text-sm font-medium" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
-                    {{ gig.seller }}
-                  </p>
+                  <p class="explorer-gig-seller-name">{{ gig.seller }}</p>
                 </div>
 
                 <!-- Title -->
-                <h3 class="font-semibold mb-3 line-clamp-2" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-md)', fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-3)' }}>
-                  {{ gig.title }}
-                </h3>
+                <h3 class="explorer-gig-title">{{ gig.title }}</h3>
 
                 <!-- Rating -->
-                <div class="flex items-center gap-1 mb-3" :style="{ gap: 'var(--space-1)', marginBottom: 'var(--space-3)' }}>
-                  <span style="color: var(--secondary-500)">★</span>
-                  <span class="text-sm font-medium" :style="{ color: 'var(--ui-text)', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)' }}>
-                    {{ gig.rating }}
-                  </span>
-                  <span class="text-sm" :style="{ color: 'var(--ui-text-muted)', fontSize: 'var(--text-sm)' }}>
-                    ({{ gig.reviews }})
-                  </span>
+                <div class="explorer-gig-rating">
+                  <span class="explorer-gig-star">★</span>
+                  <span class="explorer-gig-rating-value">{{ gig.rating }}</span>
+                  <span class="explorer-gig-reviews">({{ gig.reviews }})</span>
                 </div>
 
                 <!-- Price -->
-                <div :style="{ borderTopColor: 'var(--ui-border)', borderTopWidth: '1px', paddingTop: 'var(--space-3)' }}>
-                  <p class="text-xl font-bold" :style="{ color: 'var(--primary-500)', fontSize: '1.25rem', fontWeight: 'var(--font-bold)' }}>
-                    R$ {{ gig.price.toLocaleString('pt-BR') }}
-                  </p>
+                <div class="explorer-gig-price-wrapper">
+                  <p class="explorer-gig-price">R$ {{ gig.price.toLocaleString('pt-BR') }}</p>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Pagination -->
-          <div v-if="totalPages > 1" class="flex justify-center items-center gap-2" :style="{ gap: 'var(--space-2)' }">
+          <div v-if="totalPages > 1" class="explorer-pagination">
             <UButton
               @click="currentPage = Math.max(1, currentPage - 1)"
               :disabled="currentPage === 1"
@@ -362,20 +299,13 @@ const navigateToGig = (id: number) => {
               Anterior
             </UButton>
 
-            <div class="flex gap-1" :style="{ gap: 'var(--space-1)' }">
+            <div class="explorer-pagination-pages">
               <button
                 v-for="page in totalPages"
                 :key="page"
                 @click="currentPage = page"
-                class="px-3 py-2 rounded transition-colors"
-                :style="{
-                  padding: 'var(--space-2) var(--space-3)',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: currentPage === page ? 'var(--primary-500)' : 'var(--ui-bg-muted)',
-                  color: currentPage === page ? 'var(--darkblue-800)' : 'var(--ui-text)',
-                  fontWeight: 'var(--font-medium)',
-                  cursor: 'pointer'
-                }}
+                class="explorer-pagination-btn"
+                :class="{ active: currentPage === page }"
               >
                 {{ page }}
               </button>
@@ -394,3 +324,239 @@ const navigateToGig = (id: number) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.explorer-page {
+  min-height: 100vh;
+  background-color: var(--ui-bg);
+}
+
+.explorer-search {
+  background-color: var(--ui-bg-muted);
+  padding: var(--space-7) var(--space-6);
+}
+
+.explorer-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--ui-text);
+  margin-bottom: var(--space-6);
+}
+
+.explorer-search-input-wrapper {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.explorer-search-input {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--ui-bg-elevated);
+  color: var(--ui-text);
+  font-size: var(--text-md);
+}
+
+.explorer-search-input::placeholder {
+  color: var(--ui-text-muted);
+}
+
+.explorer-search-input:focus {
+  outline: none;
+  border-color: var(--ui-ring);
+  box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.explorer-filter-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--ui-text);
+  margin-bottom: var(--space-4);
+}
+
+.explorer-category-btn {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+  transition: all 0.2s ease;
+  background-color: var(--ui-bg-muted);
+  color: var(--ui-text);
+  border: none;
+  cursor: pointer;
+}
+
+.explorer-category-btn:hover {
+  background-color: var(--ui-bg-muted);
+}
+
+.explorer-category-btn.active {
+  background-color: var(--primary-500);
+  color: var(--darkblue-800);
+}
+
+.explorer-select {
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--ui-bg-elevated);
+  color: var(--ui-text);
+  font-size: var(--text-sm);
+}
+
+.explorer-select:focus {
+  outline: none;
+  border-color: var(--ui-ring);
+}
+
+.explorer-result-count {
+  color: var(--ui-text-muted);
+  font-size: var(--text-sm);
+}
+
+.explorer-empty-state {
+  text-align: center;
+  padding: var(--space-9);
+  color: var(--ui-text-muted);
+  font-size: var(--text-lg);
+}
+
+.explorer-gig-card {
+  cursor: pointer;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--ui-bg-elevated);
+  transition: all 0.2s ease;
+}
+
+.explorer-gig-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.explorer-gig-image {
+  position: relative;
+  overflow: hidden;
+  height: 12rem;
+  background-color: var(--offwhite-200);
+}
+
+.explorer-gig-image img {
+  transition: transform 0.3s ease;
+}
+
+.explorer-gig-card:hover .explorer-gig-image img {
+  transform: scale(1.05);
+}
+
+.explorer-gig-tag {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: var(--primary-500);
+  color: var(--darkblue-800);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+}
+
+.explorer-gig-content {
+  padding: var(--space-4);
+}
+
+.explorer-gig-seller {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.explorer-gig-seller-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--ui-text);
+}
+
+.explorer-gig-title {
+  font-size: var(--text-md);
+  font-weight: var(--font-semibold);
+  color: var(--ui-text);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.explorer-gig-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.explorer-gig-star {
+  color: var(--secondary-500);
+}
+
+.explorer-gig-rating-value {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--ui-text);
+}
+
+.explorer-gig-reviews {
+  font-size: var(--text-sm);
+  color: var(--ui-text-muted);
+}
+
+.explorer-gig-price-wrapper {
+  border-top: 1px solid var(--ui-border);
+  padding-top: var(--space-3);
+}
+
+.explorer-gig-price {
+  font-size: 1.25rem;
+  font-weight: var(--font-bold);
+  color: var(--primary-500);
+}
+
+.explorer-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.explorer-pagination-pages {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.explorer-pagination-btn {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--ui-bg-muted);
+  color: var(--ui-text);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.explorer-pagination-btn:hover {
+  background-color: var(--offwhite-300);
+}
+
+.explorer-pagination-btn.active {
+  background-color: var(--primary-500);
+  color: var(--darkblue-800);
+}
+</style>
