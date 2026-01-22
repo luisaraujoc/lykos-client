@@ -1,178 +1,326 @@
-<script setup>
-import { ref } from "vue";
-import { Lock } from "@iconoir/vue"
+<script setup lang="ts">
+import { ref, reactive } from 'vue'
 
 definePageMeta({
   layout: 'DefaultLayout',
 })
-const logoChecked = ref(true)
-const revisionsChecked = ref(true)
-const metPagamento = ref("Crédito");
 
- 
+const paymentMethod = ref('card')
+const agreeTerms = ref(false)
+const saveCard = ref(false)
 
-
-const pay = {
-    valorPacote: 1100.00,
-    taxaServico: 100.00,
+// Mock package data
+const orderData = reactive({
+  packageName: 'Logo Designer',
+  sellerName: 'Sophia Carter',
+  sellerImage: 'https://i.pravatar.cc/100?u=sophia-carter',
+  serviceImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA90odZd3razRM2DGbQD9QvpHml6rifZXxdAytw_iMNOCoBnybC9C3OtQtgTAi3_sWn7RHwHdx4idSCkDi4LxL6XQD3O9gNNUOYi8Kp40JEpYBXKd7N4IKeUlCRmuAhbBamFsjoscoNE5bMfHA9e-y-paQRWoq2wvAer3nc7rlZLju1cP2rXVoK7ILQyNoCqFERjBJ8XWtoHH2qeu2140pXtulS0yJJsOX0wJrXKV0LHAgWnYIDUMk_rkHUp_dORy_oK5uGqqSKTmA',
+  items: [
+    '1 a 2 conceitos de logo iniciais',
+    'Entrega de arquivos em alta resolução'
+  ],
+  pricing: {
+    packagePrice: 1200.00,
+    serviceFee: 100.00,
+    discount: 0,
     total: 1200.00
+  },
+  delivery: 7,
+  buyer: {
+    name: 'Bruno Silva',
+    country: 'Brasil'
+  }
+})
 
-}
+const formData = reactive({
+  cardNumber: '',
+  expiry: '',
+  cvv: '',
+  cardholderName: '',
+  cpf: '',
+  promoCode: ''
+})
 
-const prazo ={
-    prazo: 7
-}
-
-const user={
-    nome: 'Bruno Silva',
-    pais: 'Brasil'
+const handleSubmit = () => {
+  if (!agreeTerms.value) {
+    alert('Você precisa concordar com os termos')
+    return
+  }
+  console.log('Order placed:', { ...orderData, ...formData })
+  // Handle payment processing
 }
 </script>
 
 <template>
+  <div class="min-h-screen bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6 py-8">
+      <!-- Page Header -->
+      <h1 class="text-3xl font-bold text-black mb-8">Checkout</h1>
 
-    <h1 class="text-black ml-10 mt-5">Checkout</h1>
-    <div class="flex flex-1 mx-auto w-full p-6 gap-6 flex-col md:flex-row bg-white-600 ">
-        <!-- Área Esquerda -->
-        <div class=" p-6 w-3/5 flex flex-col mr-10 ">
-            <p class="mb-3 font-medium text-black">Método de Pagamento</p>
-            <form class="flex flex-col gap-3">
-                <!-- Crédito -->
-                <label class="flex items-center gap-2 cursor-pointer border border-[var(--color-dourado)] p-2 rounded">
-                    <input type="radio" v-model="metPagamento" value="Crédito" class="custom-radio" />
-                    <span class="text-black text-sm">Cartão de crédito</span>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content - Payment Form -->
+        <div class="lg:col-span-2">
+          <!-- Payment Method Selection -->
+          <div class="bg-white rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-black mb-4">Método de Pagamento</h2>
+            <div class="space-y-3">
+              <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[var(--color-dourado)] transition-colors"
+                :class="paymentMethod === 'card' && 'border-[var(--color-dourado)] bg-amber-50'">
+                <input
+                  type="radio"
+                  v-model="paymentMethod"
+                  value="card"
+                  class="w-4 h-4"
+                />
+                <span class="ml-3 font-medium text-black">Cartão de Crédito</span>
+              </label>
+
+              <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[var(--color-dourado)] transition-colors"
+                :class="paymentMethod === 'debit' && 'border-[var(--color-dourado)] bg-amber-50'">
+                <input
+                  type="radio"
+                  v-model="paymentMethod"
+                  value="debit"
+                  class="w-4 h-4"
+                />
+                <span class="ml-3 font-medium text-black">Cartão de Débito</span>
+              </label>
+
+              <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[var(--color-dourado)] transition-colors"
+                :class="paymentMethod === 'paypal' && 'border-[var(--color-dourado)] bg-amber-50'">
+                <input
+                  type="radio"
+                  v-model="paymentMethod"
+                  value="paypal"
+                  class="w-4 h-4"
+                />
+                <span class="ml-3 font-medium text-black">PayPal</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Card Details (shown only for card payment) -->
+          <div v-if="paymentMethod !== 'paypal'" class="bg-white rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-black mb-6">Informações do Cartão</h2>
+
+            <div class="space-y-4">
+              <!-- Card Number -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Número do Cartão
                 </label>
-                <!-- Débito -->
-                <label class="flex items-center gap-2 cursor-pointer border border-[var(--color-dourado)] p-2 rounded">
-                    <input type="radio" v-model="metPagamento" value="Débito" class=" custom-radio" />
-                    <span class="text-black text-sm">Cartão de débito</span>
-                </label>
-                <!-- PayPal -->
-                <label class="flex items-center gap-2 cursor-pointer border border-[var(--color-dourado)] p-2 rounded">
-                    <input type="radio" v-model="metPagamento" value="PayPal" class=" custom-radio" />
-                    <span class="text-black text-sm">PayPal</span>
-                </label>
-                <div class="flex flex-col  gap-2">
-                    <label for="" class="text-black">Número do Cartão</label>
-                    <input type="text" name="" id="" placeholder="Digite o número do cartão"
-                        class="cursor-pointer border border-[var(--color-dourado)] p-2 rounded placeholder-[var(--color-dourado)]">
-                    <div class="flex flex-row w-1/2">
-                        <label for="" class="pr-5 text-black">
-                            Vencimento
-                            <input type="text" placeholder="MM/AA"
-                                class="cursor-pointer border border-[var(--color-dourado)] p-2 rounded placeholder-[var(--color-dourado)]">
-                        </label>
-                        <label for="" class="flex flex-col text-black ">
-                            Codigo de Segurança(CVV)
-                            <input type="text" placeholder="CVV"
-                                class="cursor-pointer border border-[var(--color-dourado)] p-2 rounded placeholder-[var(--color-dourado)]">
-                        </label>
-                    </div>
-                    <label for="" class="text-black">Nome do titular do cartão</label>
-                    <input type="text" name="" id="" placeholder="Digite o nome do titular do cartão"
-                        class="cursor-pointer border border-[var(--color-dourado)] p-2 rounded placeholder-[var(--color-dourado)]">
-                    <label for="" class="text-black">CPF/CNPJ</label>
-                    <input type="text" name="" id="" placeholder="Insirir CPF/CNPJ"
-                        class="cursor-pointer border border-[var(--color-dourado)] p-2 rounded placeholder-[var(--color-dourado)]">
-                    <label class="flex items-center gap-2 cursor-pointer mt-5 text-black">
-                        <input type="Checkbox" value="PayPal" class=" custom-radio" />
-                        salvar este cartão para pagamentos futuros
-                    </label>
-                    <label for="" class="text-black">Código promocional</label>
-                    <input type="text" name="" id="" placeholder="Insirir código"
-                        class="cursor-pointer border border-[var(--color-dourado)] p-2 rounded placeholder-[var(--color-dourado)]">
+                <input
+                  v-model="formData.cardNumber"
+                  type="text"
+                  placeholder="0000 0000 0000 0000"
+                  maxlength="19"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+                />
+              </div>
+
+              <!-- Expiry and CVV -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Vencimento
+                  </label>
+                  <input
+                    v-model="formData.expiry"
+                    type="text"
+                    placeholder="MM/AA"
+                    maxlength="5"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+                  />
                 </div>
-                <button type="submit" class="text-black bg-gray-200 rounded w-24 p-2 m-1">Aplicar</button>
-            </form>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Código de Segurança (CVV)
+                  </label>
+                  <input
+                    v-model="formData.cvv"
+                    type="text"
+                    placeholder="000"
+                    maxlength="4"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+                  />
+                </div>
+              </div>
+
+              <!-- Cardholder Name -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Nome do Titular
+                </label>
+                <input
+                  v-model="formData.cardholderName"
+                  type="text"
+                  placeholder="Digite o nome completo"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+                />
+              </div>
+
+              <!-- CPF/CNPJ -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  CPF/CNPJ
+                </label>
+                <input
+                  v-model="formData.cpf"
+                  type="text"
+                  placeholder="000.000.000-00"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+                />
+              </div>
+
+              <!-- Save Card Checkbox -->
+              <label class="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
+                <input
+                  v-model="saveCard"
+                  type="checkbox"
+                  class="w-4 h-4 rounded"
+                />
+                Salvar este cartão para pagamentos futuros
+              </label>
+            </div>
+          </div>
+
+          <!-- Promo Code -->
+          <div class="bg-white rounded-lg p-6 mb-6">
+            <h3 class="font-semibold text-black mb-4">Código Promocional</h3>
+            <div class="flex gap-3">
+              <input
+                v-model="formData.promoCode"
+                type="text"
+                placeholder="Digite seu código promocional"
+                class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-dourado)]"
+              />
+              <UButton variant="soft" class="px-6">Aplicar</UButton>
+            </div>
+          </div>
+
+          <!-- Terms Agreement -->
+          <div class="bg-blue-50 rounded-lg p-6 mb-6 border border-blue-200">
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input
+                v-model="agreeTerms"
+                type="checkbox"
+                class="w-4 h-4 mt-1"
+              />
+              <div>
+                <p class="text-sm text-gray-700">
+                  Ao continuar, você concorda com nossos <span class="font-semibold text-blue-600">Termos de Serviço</span> e <span class="font-semibold text-blue-600">Política de Privacidade</span>.
+                </p>
+                <p class="text-xs text-gray-600 mt-2">
+                  💡 Seu pagamento será retido até a aprovação da entrega. Você tem total proteção do comprador.
+                </p>
+              </div>
+            </label>
+          </div>
         </div>
-        <!-- Área Direita -->
-        <div class="flex-1 w-full md:w-2/5 flex flex-col gap-4">
-            <h3>Resumo da compra</h3>
-            <div class="flex flex-row gap-2   w-full max-w-[480px] justify-between">
-                <div class="w-40 h-28 bg-center bg-no-repeat bg-cover rounded-lg"
-                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA90odZd3razRM2DGbQD9QvpHml6rifZXxdAytw_iMNOCoBnybC9C3OtQtgTAi3_sWn7RHwHdx4idSCkDi4LxL6XQD3O9gNNUOYi8Kp40JEpYBXKd7N4IKeUlCRmuAhbBamFsjoscoNE5bMfHA9e-y-paQRWoq2wvAer3nc7rlZLju1cP2rXVoK7ILQyNoCqFERjBJ8XWtoHH2qeu2140pXtulS0yJJsOX0wJrXKV0LHAgWnYIDUMk_rkHUp_dORy_oK5uGqqSKTmA");'>
-                </div>
 
-                <div class="flex flex-col gap-1 flex self-center">
-                    <p class="text-[var(--color-dourado)]">Serviço</p>
-                    <p class="text-[#0d141c] text-base font-bold leading-tight">Sessão Fotografica</p>
-                </div>
-                
-            </div>
-            <p class="text-black "><strong>Itens incluídos</strong></p>
-            <div class="flex flex-col gap-2 pr-5">
-                <label class="inline-flex items-center space-x-2 ">
-                    <input type="checkbox" v-model="logoChecked" class="form-checkbox text-yellow-500 rounded" />
-                    <span class="text-yellow-500">Logomarca + variações</span>
-                </label>
+        <!-- Sidebar - Order Summary -->
+        <div class="lg:col-span-1">
+          <div class="sticky top-20 space-y-6">
+            <!-- Order Summary Card -->
+            <div class="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 class="font-semibold text-black text-lg mb-4">Resumo da Compra</h3>
 
-                <label class="inline-flex items-center space-x-2 ">
-                    <input type="checkbox" v-model="revisionsChecked" class="form-checkbox text-yellow-500 rounded" />
-                    <span class="text-[var(--color-dourado)]">3 Revisions</span>
-                </label>
-            </div>
-            <div>
-                <div class="flex flex-row justify-between w-8/12 pb-2">
-                    <p class="text-black">Valor Pacote</p>
-                    <p class="text-black">R$ {{ pay.valorPacote }}</p>
+              <!-- Service Info -->
+              <div class="flex gap-4 mb-6">
+                <img
+                  :src="orderData.serviceImage"
+                  alt="Service"
+                  class="w-20 h-20 rounded-lg object-cover"
+                />
+                <div>
+                  <p class="text-sm text-gray-600">Serviço</p>
+                  <p class="font-semibold text-black">{{ orderData.packageName }}</p>
+                  <p class="text-xs text-gray-500 mt-1">Por {{ orderData.sellerName }}</p>
                 </div>
-                <div class="flex flex-row justify-between w-8/12 pb-2">
-                    <p class="text-black">Taxa Serviço</p>
-                    <p class="text-black">R$ {{ pay.taxaServico }}</p>
-                </div>    
-                <div class="flex flex-row justify-between w-8/12 pb-2">
-                    <p class="text-black">Valor Total</p>
-                    <p class="text-black">R$ {{ pay.total }}</p>
+              </div>
+
+              <!-- Items Included -->
+              <div class="mb-6">
+                <p class="font-medium text-black mb-3 text-sm">Itens Inclusos:</p>
+                <ul class="space-y-2">
+                  <li v-for="(item, idx) in orderData.items" :key="idx" class="flex gap-2 text-sm text-gray-700">
+                    <span class="text-[var(--color-dourado)]">✓</span>
+                    {{ item }}
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Pricing Breakdown -->
+              <div class="border-t border-gray-200 pt-4 mb-4 space-y-2 text-sm">
+                <div class="flex justify-between text-gray-700">
+                  <span>Valor do Pacote</span>
+                  <span class="font-medium">R$ {{ orderData.pricing.packagePrice.toFixed(2) }}</span>
                 </div>
+                <div class="flex justify-between text-gray-700">
+                  <span>Taxa de Serviço</span>
+                  <span class="font-medium">R$ {{ orderData.pricing.serviceFee.toFixed(2) }}</span>
+                </div>
+                <div v-if="orderData.pricing.discount > 0" class="flex justify-between text-green-600">
+                  <span>Desconto</span>
+                  <span class="font-medium">-R$ {{ orderData.pricing.discount.toFixed(2) }}</span>
+                </div>
+              </div>
+
+              <!-- Total -->
+              <div class="border-t border-gray-200 pt-4">
+                <div class="flex justify-between mb-4">
+                  <span class="font-semibold text-black">Total</span>
+                  <span class="text-2xl font-bold text-[var(--color-dourado)]">
+                    R$ {{ orderData.pricing.total.toFixed(2) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Delivery Info -->
+              <div class="bg-gray-50 rounded p-3 text-sm text-gray-700 mb-4">
+                <p class="font-medium mb-1">Prazo de Entrega</p>
+                <p>{{ orderData.delivery }} dias úteis</p>
+              </div>
+
+              <!-- Submit Button -->
+              <UButton
+                @click="handleSubmit"
+                :disabled="!agreeTerms"
+                class="w-full bg-[var(--color-dourado)] text-white font-semibold py-3"
+              >
+                🔒 Confirmar e Pagar
+              </UButton>
+
+              <p class="text-center text-xs text-gray-600 mt-3">
+                Pagamento 100% Seguro com SSL
+              </p>
             </div>
-            <p class="text-black">Prazo de Entrega: {{ prazo.prazo }} dias</p>
-            <UButton class="text-black bg-[var(--color-laranja)] rounded w-full p-2 m-1 flex justify-center items-center gap-2 w-8/12">
-                <Lock class="w-6 h-6" />
-                Confirmar e Pagar
-            </UButton>
-            <p class="text-[var(--color-dourado)] w-8/12 flex justify-center ">
-                Pagamento Seguro SSL. 
-            </p>
+
+            <!-- Buyer Info Card -->
+            <div class="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 class="font-semibold text-black mb-4 text-sm">Informações de Compra</h3>
+              <div class="space-y-3 text-sm">
+                <div>
+                  <p class="text-gray-600">Comprador</p>
+                  <p class="font-medium text-black">{{ orderData.buyer.name }}</p>
+                </div>
+                <div>
+                  <p class="text-gray-600">País</p>
+                  <p class="font-medium text-black">{{ orderData.buyer.country }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Protection Badge -->
+            <div class="bg-green-50 rounded-lg p-4 border border-green-200 text-sm">
+              <p class="font-medium text-green-900 mb-2">✓ Proteção do Comprador</p>
+              <p class="text-green-800 text-xs">
+                Seu pagamento será liberado apenas após você aprovar a entrega. Você tem proteção total.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <h3 class="ml-10 text-black pb-5">Informações de faturamento e Segurança</h3>
-    <div class="ml-10 mb-4 flex flex-row gap-10">
-        
-        <div class="">    
-            <p class="text-black pb-5">Nome do comprador: {{ user.nome }} </p>
-            <p class="text-black pb-5">Pais: {{ user.pais }}</p>
-        </div>
-        <div class="">
-            <p class="text-black pb-5">Nós lhe damos cobertura: Seu pagamento só será liberado para <br> o freelancer depois que você aprovar a entrega.</p>
-            <p class="text-black">Pagamentos 100% seguros: Usamos criptografia e proteção de dados.</p>
-        </div>
-    </div>
-
-</template> 
-
-
-<style scoped>
-.custom-radio {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #d1d5db;
-    /* cinza claro */
-    border-radius: 50%;
-    position: relative;
-    cursor: pointer;
-}
-
-.custom-radio:checked::before {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background-color: var(--color-laranja);
-    /* usa a variável */
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-</style>
+  </div>
+</template>
