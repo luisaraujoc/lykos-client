@@ -1,213 +1,255 @@
-<script setup>
+<script setup lang="ts">
+import { ref } from 'vue'
+
 definePageMeta({
   layout: 'DefaultLayout',
 })
 
-const images = [
-    {
-        src: 'https://picsum.photos/200?random=1',
-        alt: 'Paisagem ao pôr do sol',
-        description: 'Uma bela vista do pôr do sol nas montanhas.'
-    },
-    {
-        src: 'https://picsum.photos/200?random=2',
-        alt: 'Cidade iluminada à noite',
-        description: 'Luzes da cidade refletindo na água durante a noite.'
-    },
-    {
-        src: 'https://picsum.photos/200?random=3',
-        alt: 'Campo verdejante',
-        description: 'Um campo aberto com vegetação exuberante e céu limpo.'
-    }
-]
-
-const packages = [
-    {
-        title: "Logo Designer",
-        description:
-            "Este pacote foca no essencial para quem precisa de um logo profissional sem muitas complexidades ou elementos de marca adicionais.",
-        features: [
-            { input: true, box: "1 a 2 conceitos de logo iniciais." },
-            { input: true, box: "Entrega de arquivos em alta resolução" }
-        ]
-        ,
-        prazo: "3-5 dias úteis",
-        revisoes: "2 revisões",
-        preco: "R$ 1200,00"
-    },
-    {
-        title: "Branding Kit",
-        description:
-            "Este pacote é para quem busca não apenas um logo, mas também alguns elementos de branding.",
-        features: [
-            { input: true, box: "3 a 4 conceitos de brandings iniciais." },
-            { input: true, box: "Paleta de Cores Definida." },
-            { input: true, box: "Manual de Uso Simplificado da Marca" },
-            { input: true, box: "Seleção de Fontes (Primária e Secundária)." }
-        ]
-        ,
-        prazo: "15-30 dias úteis",
-        revisoes: "3-4 revisões",
-        preco: "R$ 10.000,00"
-    },
-    {
-        title: "Brand Strategy",
-        description:
-            "Este é o pacote mais robusto, ideal para empresas que buscam uma imersão completa na estratégia de marca.",
-        features: [
-            { input: true, box: "Brand Book (Manual de Marca Completo)" },
-            { input: true, box: "Pesquisa de Mercado e Análise de Concorrência" },
-            { input: true, box: "Definição de Persona/Público-Alvo" },
-            { input: true, box: "Mockups de Aplicação da Marca" }
-        ],
-
-        prazo: "1-2 meses",
-        revisoes: "7-9 revisões",
-        preco: "R$ 15.000,00"
-    }
-]
-
-const checkbox = [
-    { input: true, box: "Design de logotipo personalizado e adaptado à sua marca" },
-    { input: true, box: "Arquivos de alta resolução em vários formatos" },
-    { input: true, box: "Revisões ilimitadas até a satisfação" }
-]
-const rating = 4.9
-const totalReviews = 120
-
-const distribution = [
-    { stars: 5, percent: 80 },
-    { stars: 4, percent: 14 },
-    { stars: 3, percent: 3 },
-    { stars: 2, percent: 1 },
-    { stars: 1, percent: 2 },
-]
-
-const reviews = ref([
-    {
-        user: "Ethan Bennett",
-        avatar: "https://i.pravatar.cc/50?img=3",
-        date: "1 mês atrás",
-        stars: 5,
-        text: "O design do logotipo da Sophia superou minhas expectativas. Capturou perfeitamente a visão da minha marca.",
-        likes: 2
-    },
-    {
-        user: "Olívia Hayes",
-        avatar: "https://i.pravatar.cc/50?img=5",
-        date: "2 meses atrás",
-        stars: 5,
-        text: "Trabalhar com a Sophia foi um prazer. Ela foi ágil, criativa e criou um logotipo que realmente representa a identidade da minha marca.",
-        likes: 1
-    }
+// Mock seller gigs data
+const gigs = ref([
+  {
+    id: 1,
+    title: 'Logo Design Profissional',
+    category: 'Design',
+    image: 'https://picsum.photos/300/200?random=1',
+    price: 1200,
+    ordersActive: 5,
+    totalOrders: 128,
+    rating: 4.9,
+    reviews: 120,
+    status: 'active',
+    createdDate: '2023-01-15'
+  },
+  {
+    id: 2,
+    title: 'Branding Completo',
+    category: 'Design',
+    image: 'https://picsum.photos/300/200?random=2',
+    price: 10000,
+    ordersActive: 2,
+    totalOrders: 42,
+    rating: 5.0,
+    reviews: 42,
+    status: 'active',
+    createdDate: '2023-02-20'
+  },
+  {
+    id: 3,
+    title: 'Banner Design',
+    category: 'Design',
+    image: 'https://picsum.photos/300/200?random=3',
+    price: 500,
+    ordersActive: 0,
+    totalOrders: 15,
+    rating: 4.7,
+    reviews: 15,
+    status: 'paused',
+    createdDate: '2023-03-10'
+  },
+  {
+    id: 4,
+    title: 'Social Media Templates',
+    category: 'Design',
+    image: 'https://picsum.photos/300/200?random=4',
+    price: 300,
+    ordersActive: 8,
+    totalOrders: 156,
+    rating: 4.8,
+    reviews: 95,
+    status: 'active',
+    createdDate: '2023-04-05'
+  }
 ])
+
+const filterStatus = ref('all')
+
+const filteredGigs = computed(() => {
+  if (filterStatus.value === 'all') return gigs.value
+  return gigs.value.filter(gig => gig.status === filterStatus.value)
+})
+
+const editGig = (id: number) => {
+  navigateTo(`/dashboard/sales/gigs/${id}/edit`)
+}
+
+const deleteGig = (id: number) => {
+  // Handle delete
+  const index = gigs.value.findIndex(g => g.id === id)
+  if (index !== -1) {
+    gigs.value.splice(index, 1)
+  }
+}
+
+const toggleStatus = (id: number) => {
+  const gig = gigs.value.find(g => g.id === id)
+  if (gig) {
+    gig.status = gig.status === 'active' ? 'paused' : 'active'
+  }
+}
 </script>
 
 <template>
-
-    <div class="flex flex-col w-8/12 mx-auto mt-20 mb-20">
-        <div class="flex items-center gap-3 text-gray-800">
-            <!-- Avatar redondo -->
-            <img src="https://i.pravatar.cc/100?u=sophia-carter" alt="Sophia Carter"
-                class="w-10 h-10 rounded-full object-cover" />
-
-            <!-- Nome + rating -->
-            <div>
-                <p class="font-semibold text-sm">Sophia Carter</p>
-                <div class="flex items-center text-sm text-gray-500">
-                    <span class="text-yellow-500">★</span>
-                    <span class="ml-1">4.9</span>
-                    <span class="ml-1 text-gray-400">(120 reviews)</span>
-                </div>
-            </div>
-        </div>
-        <div class="flex justify-center">
-            <UCard class="mt-6 p-6  ">
-                <!-- Corpo: imagens com descrição -->
-                <div class="flex justify-between p-2 gap-4 w-full">
-                    <div v-for="(item, index) in images" :key="index" class=" w-1/3 flex flex-col items-center">
-                        <img :src="item.src" :alt="item.alt" class="w-full h-64 object-cover rounded-lg" />
-                        <p class="text-black text-center mt-1">
-                            {{ item.description }}
-                        </p>
-                    </div>
-                </div>
-            </UCard>
-        </div>
-
+  <div class="min-h-screen bg-white">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
         <div>
-            <h2 class="text-black mt-10 mb-4">Sobre o vendedor</h2>
-            <p class="text-black">
-                Olá! Sou Sophia, uma designer gráfica apaixonada por criar identidades visuais únicas e impactantes. Com
-                mais de 5 anos de experiência, ajudo empresas a se destacarem no mercado através de designs criativos e
-                personalizados. Vamos trabalhar juntos para transformar suas ideias em realidade!
-            </p>
-            <div>
-                <label v-for="(item, index) in checkbox" :key="index"
-                    class="flex items-center gap-2 mt-2 cursor-default select-none">
-                    <input type="checkbox" v-model="item.input" disabled class="w-4 h-4 appearance-none border-2 rounded-sm 
-                    border-[var(--color-dourado)] 
-                    checked: 
-                    cursor-not-allowed" />
-                    <span class="text-black">{{ item.box }}</span>
-                </label>
+          <h1 class="text-3xl font-bold text-black">Meus Serviços</h1>
+          <p class="text-gray-600 mt-2">Gerencie seus serviços e acompanhe os pedidos</p>
+        </div>
+        <UButton
+          class="bg-[var(--color-dourado)] text-white font-semibold"
+          @click="navigateTo('/dashboard/sales/gigs/create')"
+        >
+          + Criar Novo Serviço
+        </UButton>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-blue-50 rounded-lg p-6 border border-blue-200">
+          <p class="text-gray-600 text-sm mb-2">Serviços Ativos</p>
+          <p class="text-3xl font-bold text-blue-600">
+            {{ gigs.filter(g => g.status === 'active').length }}
+          </p>
+        </div>
+        <div class="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
+          <p class="text-gray-600 text-sm mb-2">Pedidos Ativos</p>
+          <p class="text-3xl font-bold text-yellow-600">
+            {{ gigs.reduce((sum, g) => sum + g.ordersActive, 0) }}
+          </p>
+        </div>
+        <div class="bg-green-50 rounded-lg p-6 border border-green-200">
+          <p class="text-gray-600 text-sm mb-2">Total de Pedidos</p>
+          <p class="text-3xl font-bold text-green-600">
+            {{ gigs.reduce((sum, g) => sum + g.totalOrders, 0) }}
+          </p>
+        </div>
+        <div class="bg-purple-50 rounded-lg p-6 border border-purple-200">
+          <p class="text-gray-600 text-sm mb-2">Avaliação Média</p>
+          <p class="text-3xl font-bold text-purple-600">
+            {{ (gigs.reduce((sum, g) => sum + g.rating, 0) / gigs.length).toFixed(1) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="flex gap-3 mb-6">
+        <button
+          v-for="status in ['all', 'active', 'paused']"
+          :key="status"
+          @click="filterStatus = status"
+          :class="[
+            'px-4 py-2 rounded-lg font-medium transition-colors',
+            filterStatus === status
+              ? 'bg-[var(--color-dourado)] text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          ]"
+        >
+          {{ status === 'all' ? 'Todos' : status === 'active' ? 'Ativos' : 'Pausados' }}
+        </button>
+      </div>
+
+      <!-- Gigs Table -->
+      <div class="space-y-4">
+        <div
+          v-for="gig in filteredGigs"
+          :key="gig.id"
+          class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+        >
+          <div class="flex gap-6">
+            <!-- Thumbnail -->
+            <div class="w-32 h-24 flex-shrink-0">
+              <img
+                :src="gig.image"
+                :alt="gig.title"
+                class="w-full h-full object-cover rounded-lg"
+              />
             </div>
-        </div>
 
-        <div class="divide-gray-600 mt-10 mb-5 divide-y"></div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <UCard v-for="(pack, index) in packages" :key="index"
-                class="flex flex-col justify-between border border-[var(--color-dourado)] p-4">
+            <!-- Info -->
+            <div class="flex-1">
+              <div class="flex items-start justify-between mb-2">
                 <div>
-                    <!-- Título -->
-                    <h2 class="text-lg font-bold mb-2 text-black">{{ pack.title }}</h2>
-
-                    <!-- Descrição -->
-                    <p class="text-gray-600 mb-4">{{ pack.description }}</p>
-
-                    <!-- Checkboxes -->
-                    <div class="mb-4">
-                        <label v-for="(item, index) in pack.features" :key="index"
-                            class="flex items-center gap-2 mt-2 cursor-default select-none">
-
-                            <input type="checkbox" v-model="item.input" disabled class="w-4 h-4 appearance-none border-2 rounded-sm 
-                                border-[var(--color-dourado)]
-                                cursor-not-allowed" />
-
-                            <span class="text-black">{{ item.box }}</span>
-                        </label>
-
-                    </div>
-
-                    <!-- Informações extras -->
-                    <div class="flex justify-between text-sm text-gray-500 mb-4">
-                        <div>
-                            <p class="font-medium text-[var(--color-dourado)]">Prazo de entrega</p>
-                            <p>{{ pack.prazo }}</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-[var(--color-dourado)]">Revisões inclusas</p>
-                            <p>{{ pack.revisoes }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Preço -->
-                    <p class="font-bold text-lg mb-4 text-black">Preço<br />{{ pack.preco }}</p>
+                  <h3 class="text-lg font-semibold text-black">{{ gig.title }}</h3>
+                  <p class="text-sm text-gray-500">{{ gig.category }}</p>
                 </div>
+                <span
+                  :class="[
+                    'px-3 py-1 rounded-full text-sm font-medium',
+                    gig.status === 'active'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-yellow-100 text-yellow-700'
+                  ]"
+                >
+                  {{ gig.status === 'active' ? 'Ativo' : 'Pausado' }}
+                </span>
+              </div>
 
-                <!-- Botões -->
-                <div class="mt-auto flex flex-col gap-2 items-center">
-                    <UButton color="yellow" class="text-white font-bold border bg-[var(--color-dourado)] px-15 py-2">
-                        Contratar</UButton>
-                    <UButton class="text-black">Contatar Freelancer</UButton>
+              <!-- Stats -->
+              <div class="grid grid-cols-4 gap-4 my-4">
+                <div>
+                  <p class="text-xs text-gray-500 mb-1">Pedidos Ativos</p>
+                  <p class="text-lg font-semibold text-black">{{ gig.ordersActive }}</p>
                 </div>
-            </UCard>
+                <div>
+                  <p class="text-xs text-gray-500 mb-1">Total de Pedidos</p>
+                  <p class="text-lg font-semibold text-black">{{ gig.totalOrders }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 mb-1">Avaliação</p>
+                  <div class="flex items-center gap-1">
+                    <span class="text-yellow-500">★</span>
+                    <p class="text-lg font-semibold text-black">{{ gig.rating }}</p>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 mb-1">Preço Base</p>
+                  <p class="text-lg font-semibold text-[var(--color-dourado)]">
+                    R$ {{ gig.price.toLocaleString('pt-BR') }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex-shrink-0 flex flex-col gap-2">
+              <UButton
+                size="sm"
+                @click="editGig(gig.id)"
+                variant="soft"
+              >
+                Editar
+              </UButton>
+              <UButton
+                size="sm"
+                :color="gig.status === 'active' ? 'yellow' : 'green'"
+                @click="toggleStatus(gig.id)"
+              >
+                {{ gig.status === 'active' ? 'Pausar' : 'Ativar' }}
+              </UButton>
+              <UButton
+                size="sm"
+                color="red"
+                @click="deleteGig(gig.id)"
+              >
+                Deletar
+              </UButton>
+            </div>
+          </div>
         </div>
 
-        <div class="flex justify-center gap-2">
-            <UButton class="mt-10 mb-10 text-white border bg-[var(--color-dourado)] py-5 px-10">Ver mais</UButton>
-            <UButton class="mt-10 mb-10 text-white border bg-[var(--color-dourado)] py-5 px-10">Editar</UButton>
+        <!-- Empty State -->
+        <div v-if="filteredGigs.length === 0" class="text-center py-12">
+          <p class="text-gray-500 text-lg mb-4">Nenhum serviço encontrado</p>
+          <UButton
+            class="bg-[var(--color-dourado)] text-white"
+            @click="navigateTo('/dashboard/sales/gigs/create')"
+          >
+            Criar Seu Primeiro Serviço
+          </UButton>
         </div>
+      </div>
     </div>
+  </div>
 </template>
