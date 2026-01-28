@@ -41,6 +41,13 @@ const profileLink = computed(() => `/u/${user.value?.nome_usuario || 'me'}`)
           <div class="h-6 w-px bg-[var(--ui-border)] mx-1"></div>
 
           <UButton
+              color="secondary"
+              to="/become-seller"
+          >
+            Seja um Freelancer
+          </UButton>
+
+          <UButton
               icon="i-heroicons-user"
               color="neutral"
               variant="ghost"

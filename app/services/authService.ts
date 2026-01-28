@@ -40,7 +40,7 @@ export const AuthService = (api: AxiosInstance) => ({
     },
 
     getMe(): Promise<AxiosResponse<Usuario>> {
-        return api.get<Usuario>("/api/auth/me/");
+        return api.get<Usuario>("/auth/me/");
     },
 
     logout() {
