@@ -1,26 +1,8 @@
 <script setup lang="ts">
+// Removemos o import não usado para corrigir o ESLint
 const { user, logout } = useAuth()
 
-// Usamos computed para reagir quando o 'user' for carregado
-const items = computed(() => [
-  [
-    {
-      label: 'Meu Perfil',
-      icon: 'i-heroicons-user',
-      // Usa o campo 'nome_usuario' que vem do backend, ou 'me' como fallback
-      to: `/u/${user.value?.nome_usuario || 'me'}`
-    }
-  ],
-  [
-    {
-      label: 'Sair',
-      icon: 'i-heroicons-arrow-left-on-rectangle',
-      click: logout,
-      iconClass: 'text-red-500',
-      labelClass: 'text-red-500' // Deixa o texto vermelho para indicar ação destrutiva
-    }
-  ]
-])
+const profileLink = computed(() => `/u/${user.value?.nome_usuario || 'me'}`)
 </script>
 
 <template>
@@ -35,7 +17,7 @@ const items = computed(() => [
         <div class="hidden md:flex flex-1 max-w-xl mx-8">
           <UInput
               icon="i-heroicons-magnifying-glass"
-              placeholder="Encontre serviços ou freelancers..."
+              placeholder="Encontre serviços..."
               color="gray"
               variant="outline"
               size="md"
@@ -58,22 +40,23 @@ const items = computed(() => [
 
           <div class="h-6 w-px bg-[var(--ui-border)] mx-1"></div>
 
-          <UDropdown
-              :items="items"
-              :popper="{ placement: 'bottom-end' }"
+          <UButton
+              icon="i-heroicons-user"
+              color="neutral"
+              variant="ghost"
+              :to="profileLink"
           >
-            <UAvatar
-                :src="user?.avatar_url || 'https://avatars.githubusercontent.com/u/739984?v=4'"
-                alt="Avatar"
-                size="sm"
-                class="cursor-pointer ring-2 ring-transparent hover:ring-[var(--ui-primary)] transition-all"
-            />
+            Perfil
+          </UButton>
 
-            <template #item="{ item }">
-              <span class="truncate" :class="item.labelClass">{{ item.label }}</span>
-              <UIcon :name="item.icon" class="flex-shrink-0 h-4 w-4 ms-auto" :class="item.iconClass" />
-            </template>
-          </UDropdown>
+          <UButton
+              icon="i-heroicons-arrow-left-on-rectangle"
+              color="error"
+              variant="ghost"
+              @click="logout"
+          >
+            Sair
+          </UButton>
 
         </div>
 

@@ -1,5 +1,6 @@
 // services/authService.ts
-import type { AxiosInstance } from "axios";
+import type { AxiosInstance, AxiosResponse } from "axios";
+import type { Usuario } from "~/types/auth";
 
 // Tipagem básica do Registro (Baseado no seu JSON)
 export interface RegisterPayload {
@@ -38,9 +39,10 @@ export const AuthService = (api: AxiosInstance) => ({
         return api.post("/auth/login/", payload);
     },
 
-    getMe() {
-        return api.get("/auth/me/");
+    getMe(): Promise<AxiosResponse<Usuario>> {
+        return api.get<Usuario>("/api/auth/me/");
     },
+
     logout() {
         return api.post("/auth/logout/");
     }
